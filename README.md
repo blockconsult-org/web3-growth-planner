@@ -60,7 +60,7 @@ Release notes state the signing and notarization status of each download. Unsign
 - **Save locally** stores one campaign, including all its scenarios, in this app's profile; saving again replaces that copy. Edits are not saved automatically. Export JSON for portable backups or to keep more than one campaign.
 - No analytics, telemetry, cloud synchronization or automatic uploads. Website and evidence links open in your default browser. Unknown evidence destinations require confirmation.
 
-Share links are readable, encoded snapshots, **not encrypted**. Every scenario's numeric inputs, currency, counting unit, windows, reward policy and observation status are included. **Share this scenario** lets you choose whether to also include names, measurement text, notes and evidence links. Review the preview before copying a link. Closing an unsaved workspace can lose edits; save or export first. Opening a share link replaces the current workspace.
+Share links are readable, encoded snapshots, **not encrypted**. Every scenario's numeric inputs, currency, counting unit, windows, reward policy and observation status are included. **Share this scenario** lets you choose whether to also include names, measurement text, notes and evidence links. Review the preview before copying a link. Save or export before closing the app or using **Open share link**. Opening a link replaces the current workspace and can discard unsaved edits; it does not overwrite your saved local campaign.
 
 ## Run from source
 
