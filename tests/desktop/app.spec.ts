@@ -1,0 +1,54 @@
+import { test, expect, _electron as electron } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { mkdtemp, rm, readFile, mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import meta from '../../app.json' with { type: 'json' };
+
+test('offline desktop, both languages, themes, native PDF and isolation', async () => {
+  const profile = await mkdtemp(path.join(tmpdir(), 'bc-desktop-test-'));
+  const env = { ...process.env, BC_TEST_USER_DATA: profile };
+  delete env.ELECTRON_RUN_AS_NODE;
+  const app = await electron.launch({ args: ['.'], env });
+  try {
+    const page = await app.firstWindow();
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await expect(page.locator('main h1').first()).toBeVisible();
+    await expect(page.locator('main input:visible, main textarea:visible, main select:visible').first()).toBeVisible();
+    expect(await page.evaluate(() => [typeof (window as any).require, typeof (window as any).process])).toEqual(['undefined', 'undefined']);
+    expect(await page.evaluate(async () => { try { await fetch('https://www.blockconsult.org'); return 'allowed'; } catch { return 'blocked'; } })).toBe('blocked');
+    const prefs = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences());
+    expect(prefs.nodeIntegration).toBe(false); expect(prefs.contextIsolation).toBe(true); expect(prefs.sandbox).toBe(true);
+    await page.getByRole('button', { name: 'Toggle color theme' }).click();
+    const theme = await page.locator('html').getAttribute('data-theme');
+    expect(['light','dark']).toContain(theme);
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme!);
+    await page.getByRole('button', { name: 'Open share link', exact: true }).click();
+    await page.locator('#snapshot').fill('https://example.com/#private');
+    await page.getByRole('button', { name: 'Open scenario', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('valid share link');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.evaluate(() => { document.documentElement.dataset.theme = 'dark'; });
+    await mkdir('docs', { recursive: true });
+    await page.screenshot({ path: 'docs/screenshot.png' });
+    const a11y = await new AxeBuilder({ page }).setLegacyMode().withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+    expect(a11y.violations.map(v => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+    const pdf = path.join(profile, 'report.pdf');
+    await app.evaluate(({ dialog }, filePath) => { dialog.showSaveDialog = async () => ({ canceled: false, filePath }); }, pdf);
+    expect(await page.evaluate(() => (window as any).desktop.savePdf())).toBe(true);
+    const data = await readFile(pdf); expect(data.subarray(0, 5).toString()).toBe('%PDF-'); expect(data.length).toBeGreaterThan(10000); await writeFile('test-results/report.pdf', data);
+    await page.goto('bcapp://app/de' + meta.publicPath);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+    await expect(page.locator('main h1').first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Link öffnen', exact: true })).toBeVisible();
+    await page.setViewportSize({ width: 800, height: 700 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.evaluate(() => { document.documentElement.dataset.theme = 'light'; });
+    await page.evaluate(async () => { getComputedStyle(document.documentElement).color; await Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))); });
+    const deA11y = await new AxeBuilder({ page }).setLegacyMode().withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+    expect(deA11y.violations.flatMap(v => v.nodes.map(n => `${v.id}: ${n.html} ${n.failureSummary}`))).toEqual([]);
+    expect(errors).toEqual([]);
+  } finally { await app.close(); await rm(profile, { recursive: true, force: true }); }
+});

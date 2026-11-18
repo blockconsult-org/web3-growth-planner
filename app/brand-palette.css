@@ -1,0 +1,34 @@
+/* Block Consult website and admin share one palette. Dark is the fallback;
+   ThemeScript applies the saved choice or system preference before paint. */
+:root {
+  --bc-bg: #08090a;
+  --bc-surface: #101215;
+  --bc-elevated: #191c21;
+  --bc-fg: #ededee;
+  --bc-muted: #9ca1a8;
+  --bc-faint: #7d838b;
+  --bc-line: oklch(1 0 0 / 11%);
+  --bc-line-strong: oklch(1 0 0 / 21%);
+  --bc-accent: #3176d2;
+  --bc-accent-dim: #2a64b3;
+  --bc-accent-fg: #ffffff;
+  --bc-link: #4f8ae6;
+  --bc-block-1: #173255;
+  --bc-block-2: #224d87;
+  --bc-block-3: #2962ad;
+  --bc-block-4: #3176d2;
+}
+
+:root[data-theme="light"] {
+  --bc-bg: #f7f8fa;
+  --bc-surface: #ffffff;
+  --bc-elevated: #eef0f4;
+  --bc-fg: #0b0d10;
+  --bc-muted: #4d535c;
+  --bc-faint: #666c75;
+  --bc-line: oklch(0 0 0 / 9%);
+  --bc-line-strong: oklch(0 0 0 / 18%);
+  --bc-accent: #2867c4;
+  --bc-accent-dim: #1f58ad;
+  --bc-link: #2360bd;
+}

@@ -1,0 +1,307 @@
+/* ----------------------------------------------------------------------------
+   Simulator form controls: the parts that utilities cannot express. The
+   classes are set by simulator/components/fields.
+
+   .sim-range          the slider under a number field
+   .sim-switch         the on/off switch
+   .sim-help-button    the "?" button
+   .sim-help-popover   the text it opens
+   .sim-section-panel  the collapsing body of an input group
+
+   Everything sits in the components layer and reads the site's tokens, so
+   both themes work and a utility on the same element still wins. Motion is
+   colour, opacity and transform, apart from the height of a section, and
+   the reduced-motion rule in app/globals.css shortens all of it to nothing.
+---------------------------------------------------------------------------- */
+@layer components {
+  /* --------------------------------------------------------------------------
+     Slider. The input is 44px high so a finger can find it, and the track is
+     a 2px line through its middle. Track and fill are monochrome and the
+     square thumb takes the accent only while it is hovered, dragged or
+     focused, which keeps a form of twenty sliders from turning blue.
+
+     WebKit has no element for the filled part of a track, so there the fill
+     is a two-colour background that stops at --sim-range-fill, which the
+     component sets to the value's share of the track. Firefox has
+     ::-moz-range-progress. The two engines need separate rules throughout:
+     a selector list holding a pseudo-element the browser does not know is
+     dropped whole.
+
+     Forced-colours modes keep the system slider, as .check-box keeps the
+     system checkbox, because every fill here would be replaced.
+  -------------------------------------------------------------------------- */
+  @media (forced-colors: none) {
+    .sim-range {
+      -webkit-appearance: none;
+      appearance: none;
+      display: block;
+      width: 100%;
+      height: calc(var(--spacing) * 11);
+      margin: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .sim-range::-webkit-slider-runnable-track {
+      height: 2px;
+      background: linear-gradient(
+        to right,
+        var(--color-muted) var(--sim-range-fill, 0%),
+        var(--color-line-strong) var(--sim-range-fill, 0%)
+      );
+    }
+    .sim-range::-moz-range-track {
+      height: 2px;
+      background-color: var(--color-line-strong);
+    }
+    .sim-range::-moz-range-progress {
+      height: 2px;
+      background-color: var(--color-muted);
+    }
+
+    /* WebKit hangs the thumb from the top of the track, so the margin lifts
+       it by half the difference in height. Firefox centres it by itself. */
+    .sim-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+      margin-top: calc(1px - var(--spacing) * 2);
+      border: 0;
+      border-radius: var(--radius-card);
+      background-color: var(--color-fg);
+      transition: background-color 200ms var(--ease-out-quart);
+    }
+    .sim-range::-moz-range-thumb {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+      border: 0;
+      border-radius: var(--radius-card);
+      background-color: var(--color-fg);
+      transition: background-color 200ms var(--ease-out-quart);
+    }
+
+    @media (hover: hover) {
+      .sim-range:hover::-webkit-slider-thumb {
+        background-color: var(--color-accent);
+      }
+      .sim-range:hover::-moz-range-thumb {
+        background-color: var(--color-accent);
+      }
+    }
+    .sim-range:active::-webkit-slider-thumb {
+      background-color: var(--color-accent);
+    }
+    .sim-range:active::-moz-range-thumb {
+      background-color: var(--color-accent);
+    }
+
+    /* The ring goes round the thumb, the part that moves, in place of the
+       page's ring round the whole 44px row. */
+    .sim-range:focus-visible {
+      outline: none;
+    }
+    .sim-range:focus-visible::-webkit-slider-thumb {
+      background-color: var(--color-accent);
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+    }
+    .sim-range:focus-visible::-moz-range-thumb {
+      background-color: var(--color-accent);
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+    }
+
+    .sim-range:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    .sim-range:disabled::-webkit-slider-thumb {
+      background-color: var(--color-fg);
+    }
+    .sim-range:disabled::-moz-range-thumb {
+      background-color: var(--color-fg);
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Switch. A checkbox drawn as a 36 by 20 track with a square thumb, in the
+     manner of .check-box: the same border, the same accent fill when on, and
+     the system control back in forced-colours modes. The thumb travels the
+     inner width less its own width and the two 3px margins.
+  -------------------------------------------------------------------------- */
+  .sim-switch {
+    -webkit-appearance: none;
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: calc(var(--spacing) * 9);
+    height: calc(var(--spacing) * 5);
+    margin: 0;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-out-quart),
+      border-color 200ms var(--ease-out-quart);
+  }
+  .sim-switch::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--spacing) * 0.75);
+    left: calc(var(--spacing) * 0.75);
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+    background-color: var(--color-muted);
+    transition:
+      transform 200ms var(--ease-out-quart),
+      background-color 200ms var(--ease-out-quart);
+  }
+  .sim-switch:checked {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+  }
+  .sim-switch:checked::before {
+    background-color: var(--color-accent-fg);
+    transform: translateX(calc(var(--spacing) * 4));
+  }
+  @media (hover: hover) {
+    .sim-switch:hover {
+      border-color: var(--color-accent);
+    }
+  }
+  .sim-switch:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  @media (forced-colors: active) {
+    .sim-switch {
+      -webkit-appearance: auto;
+      appearance: auto;
+      width: auto;
+      height: auto;
+    }
+    .sim-switch::before {
+      display: none;
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Help. The button is a hairline square that takes the accent while its
+     popover is open. The open state has no attribute to select on, since the
+     browser tracks it, so the rule looks at the popover that follows the
+     button. The text uses the link blue, which clears AA on the dark page
+     where the accent itself falls just short.
+  -------------------------------------------------------------------------- */
+  .sim-help-button {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background-color: transparent;
+    color: var(--color-faint);
+    transition:
+      border-color 200ms var(--ease-out-quart),
+      color 200ms var(--ease-out-quart);
+  }
+  @media (hover: hover) {
+    .sim-help-button:hover {
+      border-color: var(--color-line-strong);
+      color: var(--color-fg);
+    }
+  }
+  .sim-help-button:has(+ .sim-help-popover:popover-open) {
+    border-color: var(--color-accent);
+    color: var(--color-link);
+  }
+
+  /* Every rule for the popover is tied to :popover-open. A browser without
+     popovers drops these rules and shows the help as plain text after the
+     button, which is the better failure: nothing is hidden and nothing is
+     stranded in a corner of the window.
+
+     The browser's default centres a popover in the window. The component
+     sets top and left, so the default insets and margin are cleared. The
+     size limits leave 12px to each edge, the distance the component clamps
+     to; a percentage of a fixed box is taken from the window without its
+     scrollbar. The type is reset because the popover inherits from wherever
+     its button sits, which may be an uppercase mono table header. */
+  .sim-help-popover:popover-open {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    width: max-content;
+    max-width: min(calc(var(--spacing) * 80), calc(100% - var(--spacing) * 6));
+    max-height: calc(100% - var(--spacing) * 6);
+    overflow-y: auto;
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3.5);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-card);
+    background-color: var(--color-elevated);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: start;
+    text-transform: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    opacity: 1;
+    transition: opacity 150ms var(--ease-out-quart);
+  }
+  /* Fades in where the browser can transition from display: none. */
+  @starting-style {
+    .sim-help-popover:popover-open {
+      opacity: 0;
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Section panel. Radix measures the open height into
+     --radix-accordion-content-height and keeps the panel mounted until the
+     closing animation ends, so the height can run to and from a real number
+     and the content fades with it, as the FAQ answers do.
+
+     The panel clips its content while the height moves. Left at that, it
+     would also clip the focus ring of a field at its side edge, so the panel
+     is 8px wider than its row on each side and pads the same 8px back, as
+     pin-side-fit does in app/globals.css.
+  -------------------------------------------------------------------------- */
+  .sim-section-panel {
+    overflow: hidden;
+    margin-inline: calc(var(--spacing) * -2);
+    padding-inline: calc(var(--spacing) * 2);
+  }
+  .sim-section-panel[data-state="open"] {
+    animation: sim-section-open 300ms var(--ease-out-quart);
+  }
+  .sim-section-panel[data-state="closed"] {
+    animation: sim-section-close 300ms var(--ease-out-quart);
+  }
+  @keyframes sim-section-open {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+  @keyframes sim-section-close {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sim-section-panel[data-state] {
+      animation: none;
+    }
+  }
+}

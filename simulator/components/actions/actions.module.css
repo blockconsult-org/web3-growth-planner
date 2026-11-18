@@ -1,0 +1,99 @@
+/* Public tool actions: square geometry, one type scale and touch-sized targets. */
+.scope :where(button:not([role="combobox"], [role="switch"], :global(.sim-help-button))), .button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: .625rem .875rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  font: 500 .875rem/1.4 var(--font-sans);
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 150ms, border-color 150ms, color 150ms;
+}
+.scope :where(button):disabled, .button:disabled { opacity: .5; cursor: not-allowed; }
+.scope :where(button):focus-visible, .button:focus-visible { outline: 2px solid var(--color-link); outline-offset: 3px; }
+@media (hover: hover) {
+  .scope :where(button:not([role="combobox"], [role="switch"], :global(.sim-help-button))):enabled:hover, .button:not(:disabled):hover { background: var(--color-elevated); border-color: var(--color-link); }
+}
+.scope :where(button:not([role="combobox"], [role="switch"], :global(.sim-help-button))):enabled:active, .button:not(:disabled):active { background: color-mix(in srgb, var(--color-link) 12%, var(--color-surface)); border-color: var(--color-link); }
+.primary { composes: button; }
+.primary.primary { background: var(--color-block-1); border-color: var(--color-block-1); color: var(--color-accent-fg); }
+.primary.primary:enabled:hover, .primary.primary:enabled:active { background: var(--color-block-3); border-color: var(--color-block-3); }
+.text { composes: button; }
+.text.text { background: transparent; border-color: transparent; color: var(--color-link); padding-inline: .25rem; }
+.text.text:enabled:hover { background: transparent; text-decoration: underline; text-underline-offset: 4px; }
+.destructive { composes: button; }
+.destructive.destructive { border-style: dashed; background: transparent; color: var(--color-muted); }
+.destructive.destructive:enabled:hover { color: var(--color-fg); text-decoration: underline; text-underline-offset: 4px; }
+
+/* Layout belongs to the tool; selection and focus treatments are shared. */
+.tabs { border-bottom: 1px solid var(--color-line-strong); isolation: isolate; }
+.tabs :where(button), .tab.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-width: 0;
+  min-height: 48px;
+  padding: .75rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: 500 .875rem/1.4 var(--font-sans);
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.tabs :where(button):is([aria-selected="true"], [aria-pressed="true"], [aria-checked="true"], [data-state="active"]),
+.tab.tab:is([aria-selected="true"], [aria-pressed="true"], [aria-checked="true"], [data-state="active"]) { background: var(--color-surface); border-bottom-color: var(--color-link); color: var(--color-fg); }
+.tabs :where(button):focus-visible, .tab.tab:focus-visible { outline: 2px solid var(--color-link); outline-offset: -3px; z-index: 1; }
+@media (hover: hover) {
+  .tabs :where(button):enabled:hover, .tab.tab:enabled:hover { background: var(--color-elevated); color: var(--color-fg); }
+}
+.tab { composes: button; }
+.segments { display: flex; width: 100%; border: 1px solid var(--color-line-strong); background: var(--color-surface); }
+.segments .tab { flex: 1 1 0; padding-inline: .5rem; }
+.segments .tab + .tab { border-left: 1px solid var(--color-line); }
+.segments[aria-invalid="true"] { border-color: var(--color-link); }
+
+.menu { min-width: 0; }
+.trigger { composes: button; width: 100%; height: 100%; justify-content: space-between; gap: .75rem; text-align: left; }
+.trigger[aria-expanded="true"] { border-color: var(--color-link); }
+.panel.panel { width: 18rem; }
+.panel .item { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; min-height: 44px; padding: .625rem .75rem; border: 0; border-radius: 0; background: transparent; color: var(--color-fg); font: 400 .875rem/1.5 var(--font-sans); text-align: left; overflow-wrap: anywhere; cursor: pointer; touch-action: manipulation; }
+.panel .item:disabled { opacity: .5; cursor: not-allowed; }
+.panel .item:focus-visible { outline: 2px solid var(--color-link); outline-offset: -2px; background: color-mix(in srgb, var(--color-link) 9%, var(--color-surface)); }
+@media (hover: hover) {
+  .panel .item:enabled:hover { background: color-mix(in srgb, var(--color-link) 9%, var(--color-surface)); }
+}
+.item > span:first-child { min-width: 0; }
+.item > span:last-child { width: 16px; flex: none; text-align: center; }
+.panel .item[data-destructive="true"] { margin-top: .25rem; border-top: 1px solid var(--color-line-strong); }
+.group.group, .note.note { margin: 0; padding: .75rem; color: var(--color-muted); }
+.group.group { padding-bottom: .25rem; font: .6875rem/1.5 var(--font-mono); text-transform: uppercase; letter-spacing: .07em; }
+.note.note { border-top: 1px solid var(--color-line); font: .75rem/1.6 var(--font-sans); }
+@media (max-width: 600px) {
+  .tabs :where(button), .tab.tab { padding-inline: .5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scope button, .button { transition: none; }
+}
+@media (forced-colors: active) {
+  .tabs :where(button):is([aria-selected="true"], [aria-pressed="true"]), .tab.tab:is([aria-checked="true"], [data-state="active"]) { border-bottom-color: Highlight; color: Highlight; }
+}

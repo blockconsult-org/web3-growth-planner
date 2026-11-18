@@ -1,0 +1,107 @@
+{
+  "name": "@blockconsult/web3-growth-planner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Model campaigns, acquisition costs, incentive budgets and retention.",
+  "author": "Block Consult GmbH",
+  "license": "MIT",
+  "type": "module",
+  "main": "desktop/main.cjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blockconsult-org/web3-growth-planner.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "start": "electron .",
+    "test": "node scripts/test.mjs",
+    "test:desktop": "playwright test",
+    "verify": "npm test && npm run build && npm run test:desktop",
+    "dist": "electron-builder --publish never"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "@tailwindcss/vite": "4.3.5",
+    "tailwindcss": "4.3.5",
+    "@playwright/test": "1.65.1",
+    "@axe-core/playwright": "4.11.3",
+    "electron": "45.3.4",
+    "electron-builder": "26.18.0",
+    "typescript": "6.0.3",
+    "tsx": "4.23.15",
+    "vite": "8.3.8",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "@radix-ui/react-accordion": "1.2.20",
+    "@radix-ui/react-tabs": "1.1.21"
+  },
+  "overrides": {
+    "minimatch@>=7": "^11.0.9"
+  },
+  "build": {
+    "appId": "org.blockconsult.web3growthplanner",
+    "productName": "Web3 Growth & Incentive Planner",
+    "copyright": "Copyright \u00a9 2026 Block Consult GmbH",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "desktop/**/*",
+      "app.json",
+      "package.json",
+      "LICENSE",
+      "THIRD_PARTY_NOTICES.md",
+      "build/icon.png"
+    ],
+    "asar": true,
+    "artifactName": "web3-growth-planner-${version}-${os}-${arch}.${ext}",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "build/icon.png",
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": false,
+      "signIgnore": [
+        "\\.pak$"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "web3-growth-planner-${version}-windows-${arch}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "web3-growth-planner-${version}-windows-${arch}-portable.${ext}"
+    },
+    "publish": null,
+    "electronLanguages": [
+      "en",
+      "en-US",
+      "en-GB",
+      "de"
+    ]
+  }
+}

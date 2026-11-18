@@ -1,0 +1,1073 @@
+@import "tailwindcss";
+@import "./brand-palette.css";
+
+/* ----------------------------------------------------------------------------
+   Block Consult — design tokens
+   Near-monochrome palette in two themes. A single cornflower-blue accent — the
+   logo blue (#3176d2) — used sparingly.
+   No gradients-as-decoration, no glows. Hairline borders, generous space.
+
+   The shared palette in brand-palette.css supplies both themes. Dark is the
+   fallback; the light palette uses :root[data-theme="light"]. The attribute is set
+   before first paint by the inline script in app/[lang]/layout.tsx.
+---------------------------------------------------------------------------- */
+@theme {
+  --color-bg: var(--bc-bg);
+  --color-surface: var(--bc-surface);
+  --color-elevated: var(--bc-elevated);
+  --color-fg: var(--bc-fg);
+  --color-muted: var(--bc-muted);
+  /* Smallest labels still clear WCAG AA (≈5:1) on the background. */
+  --color-faint: var(--bc-faint);
+  --color-line: var(--bc-line);
+  --color-line-strong: var(--bc-line-strong);
+  --color-accent: var(--bc-accent);
+  --color-accent-dim: var(--bc-accent-dim);
+  --color-accent-fg: var(--bc-accent-fg);
+  /* Lighter blue reserved for body-sized links/text — clears WCAG AA (≈5.8:1)
+     on the dark background, where the brand accent sits just under 4.5:1. */
+  --color-link: var(--bc-link);
+
+  /* The four logo-block shades form the dark-to-light ramp used by the
+     decorative diagrams and the four-block pulse. */
+  --color-block-1: var(--bc-block-1);
+  --color-block-2: var(--bc-block-2);
+  --color-block-3: var(--bc-block-3);
+  --color-block-4: var(--bc-block-4);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+  --font-block: var(--font-doto), var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman",
+    serif;
+
+  --text-7xl: 4.5rem;
+  --text-8xl: 6rem;
+
+  /* Steps the default scale lacks. micro is the smallest mono label, body the
+     copy inside cards, reading the long-form article text from md up, title
+     the section heading from md up. */
+  --text-micro: 0.6875rem;
+  --text-body: 0.9375rem;
+  --text-reading: 1.0625rem;
+  --text-title: 2.75rem;
+  --text-title--line-height: 1.06;
+
+  /* Fluid display sizes: md for the contact panel and article titles, lg for
+     page heroes, xl for the home hero. Each carries its own leading and
+     tracking so a heading needs one class. */
+  --text-display-md: clamp(2rem, 4.5vw, 3.25rem);
+  --text-display-md--line-height: 1.08;
+  --text-display-md--letter-spacing: -0.03em;
+  --text-display-lg: clamp(2.25rem, 5.5vw, 3.75rem);
+  --text-display-lg--line-height: 1.06;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-xl: clamp(2.5rem, 6.6vw, 4.75rem);
+  --text-display-xl--line-height: 1.04;
+  --text-display-xl--letter-spacing: -0.03em;
+
+  --tracking-eyebrow: 0.2em;
+  /* Long-form article text: looser than `relaxed`, tighter than `loose`. */
+  --leading-reading: 1.75;
+
+  /* Square by default — the "block" geometry. Cards, panels, inputs and
+     buttons all sit at 0; only small circular indicator dots stay round. */
+  --radius-card: 0px;
+
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Tokens that are only read through var() or from the hero canvas. They sit
+   outside @theme so they are always emitted.
+
+   --color-card is the fill of every .card. Solid surfaces separate the cards
+   from the page in both themes. Diagram and feature fills create distinct
+   section types without introducing a second accent colour.
+
+   --color-shade-1..4 is the logo ramp as it appears on the page: the brand
+   blue at four opacities over the current background. The lattice and the
+   four-block pulse use it, so they read quiet-to-bright in either theme. */
+:root {
+  color-scheme: dark;
+  --site-max-width: 80rem;
+  --site-header-height: 4.5rem;
+  --color-shade-1: #173255;
+  --color-shade-2: #224d87;
+  --color-shade-3: #2962ad;
+  --color-shade-4: #3176d2;
+  --color-card: var(--color-surface);
+  --color-diagram: #0c1016;
+  --color-feature: #111e31;
+  --color-button: #2867c4;
+  --color-button-hover: #225bad;
+  --color-grid: oklch(1 0 0 / 3%);
+  --color-scroll-thumb: oklch(1 0 0 / 10%);
+  --color-scroll-thumb-hover: oklch(1 0 0 / 18%);
+}
+
+/* ----------------------------------------------------------------------------
+   Light theme — the same roles on a cool paper background. The accent and
+   link blues are a step darker than in the dark theme so they clear WCAG AA
+   as text. Primary buttons retain their high-contrast blue in either theme.
+---------------------------------------------------------------------------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-shade-1: #aec8eb;
+  --color-shade-2: #7aa6e1;
+  --color-shade-3: #5990da;
+  --color-shade-4: #3176d2;
+  --color-card: var(--color-surface);
+  --color-diagram: #edf2f8;
+  --color-feature: #e6eefb;
+  --color-button: #2867c4;
+  --color-button-hover: #1f58ad;
+  --color-grid: oklch(0 0 0 / 4%);
+  --color-scroll-thumb: oklch(0 0 0 / 14%);
+  --color-scroll-thumb-hover: oklch(0 0 0 / 24%);
+}
+
+/* Show an element in one theme only (logo variants, toggle icons). */
+:root[data-theme="light"] .only-dark,
+:root:not([data-theme="light"]) .only-light {
+  display: none;
+}
+
+/* Client marks render in white on dark and ink on light, including colour artwork. */
+.mark-mono {
+  filter: brightness(0) invert(1);
+}
+
+:root[data-theme="light"] .mark-mono {
+  filter: brightness(0);
+}
+
+/* Navigation: a spacious header and service disclosures in both themes. */
+.site-header {
+  background: color-mix(in oklab, var(--color-bg) 88%, transparent);
+  border-bottom: 1px solid var(--color-line);
+  backdrop-filter: blur(20px);
+}
+.site-header[data-scrolled="true"] {
+  background: color-mix(in oklab, var(--color-bg) 96%, transparent);
+}
+.site-header-row {
+  display: flex;
+  height: var(--site-header-height);
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.desktop-nav-list,
+.nav-utilities,
+.nav-practice-trigger {
+  display: flex;
+  align-items: center;
+}
+.desktop-nav-list {
+  gap: 0.375rem;
+}
+.nav-utilities {
+  flex-shrink: 0;
+}
+.nav-link {
+  display: inline-flex;
+  position: relative;
+  min-height: 2.75rem;
+  align-items: center;
+  padding-inline: 0.625rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  transition: color 160ms ease-out;
+}
+.nav-link::after {
+  position: absolute;
+  inset: auto 0.625rem 0;
+  height: 2px;
+  background: var(--color-accent);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 160ms ease-out;
+}
+.nav-link:hover,
+.nav-link[aria-current],
+.nav-practice-trigger[data-expanded] .nav-link {
+  color: var(--color-fg);
+}
+.nav-link:hover::after,
+.nav-link[aria-current]::after,
+.nav-practice-trigger[data-expanded] .nav-link::after {
+  transform: scaleX(1);
+}
+.nav-practice {
+  --nav-submenu-width: 38rem;
+  --nav-submenu-gap: 2rem;
+  position: relative;
+}
+/* Keep the trigger and panel one continuous pointer target across the gap. */
+.nav-hover-bridge {
+  position: absolute;
+  top: 100%;
+  left: -1rem;
+  width: var(--nav-submenu-width);
+  height: calc(var(--nav-submenu-gap) + 1px);
+}
+.nav-disclosure {
+  display: grid;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--radius-card);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 160ms ease-out, background 160ms ease-out;
+}
+.nav-disclosure:hover,
+.nav-disclosure[aria-expanded="true"] {
+  color: var(--color-link);
+  background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+}
+.nav-disclosure svg {
+  transition: transform 160ms ease-out;
+}
+.nav-disclosure[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.nav-utility-button:hover {
+  color: var(--color-fg);
+  background: var(--color-elevated);
+}
+.site-header :is(a, button):focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 4px;
+}
+.nav-submenu {
+  position: absolute;
+  top: calc(100% + var(--nav-submenu-gap));
+  left: -1rem;
+  width: var(--nav-submenu-width);
+  max-height: calc(100dvh - var(--site-header-height) - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: 0 16px 48px -24px rgb(0 0 0 / 32%);
+}
+.nav-submenu:not([hidden]),
+.nav-mobile-menu:not([hidden]) {
+  animation: nav-reveal 180ms var(--ease-out-quart) both;
+}
+.nav-submenu-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-inline: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.nav-submenu-intro {
+  max-width: 23rem;
+  margin-top: 0.375rem;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+.nav-overview {
+  display: inline-flex;
+  flex-shrink: 0;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--color-fg);
+  font-size: 0.8125rem;
+}
+.nav-overview:hover {
+  color: var(--color-link);
+}
+.nav-service-list {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.75rem;
+}
+.nav-service {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-card);
+  transition: background 160ms ease-out;
+}
+.nav-service:hover,
+.nav-service[aria-current] {
+  background: var(--color-elevated);
+}
+.nav-service-art {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 15%, transparent);
+  border-radius: var(--radius-card);
+  color: var(--color-link);
+  background: color-mix(in oklab, var(--color-accent) 8%, var(--color-bg));
+}
+.nav-service-title {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-fg);
+}
+.nav-service-description {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+.nav-service-arrow {
+  margin-left: 0.5rem;
+  color: var(--color-muted);
+}
+.nav-service:hover .nav-service-arrow {
+  color: var(--color-link);
+}
+.nav-mobile-menu {
+  position: absolute;
+  inset: 100% 0 auto;
+  height: calc(100dvh - var(--site-header-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-nav-list > li {
+  border-bottom: 1px solid var(--color-line);
+}
+.mobile-nav-list .nav-link {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 4rem;
+  justify-content: space-between;
+  padding-inline: 0;
+  font-size: 1.25rem;
+  white-space: normal;
+}
+.mobile-nav-list .nav-link::after {
+  display: none;
+}
+.mobile-nav-list .nav-link[aria-current] {
+  color: var(--color-link);
+}
+.nav-practice-mobile .nav-disclosure {
+  width: 2.75rem;
+}
+.nav-practice-mobile .nav-submenu {
+  position: static;
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-color: var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+.nav-practice-mobile .nav-submenu-heading {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-inline: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.625rem;
+}
+.nav-practice-mobile .nav-submenu-heading .label-mono {
+  display: none;
+}
+.nav-practice-mobile .nav-submenu-intro {
+  margin-top: 0;
+  font-size: 0.8125rem;
+}
+.nav-practice-mobile .nav-service-list {
+  padding-top: 0.5rem;
+}
+.nav-practice-mobile .nav-service {
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  gap: 0.625rem;
+  padding: 0.75rem;
+}
+.nav-practice-mobile .nav-service-art {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.nav-practice-mobile .nav-service-art svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.nav-practice-mobile .nav-service-title {
+  font-size: 0.875rem;
+}
+.nav-practice-mobile .nav-service-description {
+  font-size: 0.75rem;
+}
+.nav-practice-mobile .nav-service-arrow {
+  width: 1rem;
+  margin-left: 0;
+}
+@media (width >= 64rem) {
+  :root {
+    --site-header-height: 5rem;
+  }
+  .nav-utilities {
+    gap: 0.125rem;
+    border-left: 1px solid var(--color-line-strong);
+    padding-left: 1rem;
+  }
+}
+@media (width >= 80rem) {
+  .site-header-row {
+    gap: 2rem;
+  }
+  .desktop-nav-list {
+    gap: 0.75rem;
+  }
+}
+/* Keep the full navigation and project action inside the page gutter on
+   small desktops, including the longer German labels. */
+@media (64rem <= width < 80rem) {
+  .site-header-row {
+    gap: 0.75rem;
+  }
+  .nav-link {
+    padding-inline: 0.5rem;
+  }
+  .nav-utilities {
+    padding-left: 0.5rem;
+  }
+  .site-header .button-link {
+    padding-inline: 1rem;
+  }
+}
+@media (width < 24rem) {
+  .site-header-container {
+    padding-inline: 1rem;
+  }
+  .site-header-row > a img {
+    height: 1.625rem;
+  }
+  .site-header-row {
+    gap: 0.5rem;
+  }
+}
+@keyframes nav-reveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Primary actions use a consistent, high-contrast brand blue in both themes. */
+.btn-block {
+  background-color: var(--color-button);
+}
+.btn-block:hover {
+  background-color: var(--color-button-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-block:hover {
+    animation: none;
+    background-color: var(--color-button-hover);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Components — the surfaces and labels every page shares. They sit in the
+   components layer, so any utility on the same element still wins.
+
+   .card       the hairline panel: border, square corners, --color-card fill.
+   .card-link  a card that is a link. On hover it lifts 2px, the border
+               strengthens and an accent rule draws across the top edge; a
+               press drops it back. Hover styles apply only where the device
+               can hover, so a tap does not leave a card raised.
+   .label-mono the mono uppercase micro-label above groups and inside cards.
+               Faint by default; add text-muted or text-accent to recolour,
+               text-micro for the 11px size.
+   .check-box  a square checkbox in the block geometry. Fills with the accent
+               when ticked; the tick is a clipped pseudo-element. Forced-colour
+               modes get the system control back.
+---------------------------------------------------------------------------- */
+@layer components {
+  .section-heading {
+    font-size: clamp(1.875rem, 3.5vw, 3rem);
+    font-weight: 550;
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+  }
+
+  .diagram-surface {
+    background-color: var(--color-diagram);
+  }
+
+  .section-tonal {
+    background-color: var(--color-surface);
+  }
+
+  .section-tonal .card {
+    background-color: var(--color-bg);
+  }
+
+  .service-card h3,
+  .article-card h3 {
+    transition: color 180ms ease-out;
+  }
+
+  .service-card:hover h3,
+  .article-card:hover h3 {
+    color: var(--color-link);
+  }
+
+  .article-card .article-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .card.reference-card {
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .card.contact-form {
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .contact-field:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+    background-color: var(--color-surface);
+  }
+
+  .article-filter {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .article-filter a[aria-current] {
+    border-color: var(--color-link);
+    background-color: var(--color-feature);
+  }
+
+  /* Doto's smaller x-height needs an optical size lift beside Geist. Weight
+     875 gives the blocks more ink while preserving their gaps; ROND 0 keeps
+     square corners. The canvas moves individual ink blocks during hover. */
+  .headline-accent {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-block);
+    font-size: 1.12em;
+    font-weight: 875;
+    line-height: 1.12;
+    font-style: normal;
+    font-synthesis: none;
+    font-variation-settings: "ROND" 0;
+    font-feature-settings: normal;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+  }
+
+  .headline-accent__baseline {
+    display: inline-block;
+    width: 0;
+    height: 0;
+  }
+
+  .headline-accent__pixels {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce), (hover: none), (forced-colors: active) {
+    .headline-accent__pixels {
+      display: none;
+    }
+  }
+
+  .card {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background-color: var(--color-card);
+  }
+
+  .card-link {
+    position: relative;
+    transition:
+      transform 200ms var(--ease-out-quart),
+      border-color 200ms var(--ease-out-quart);
+  }
+  .card-link::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background-color: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms var(--ease-out-quart);
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .card-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-line-strong);
+    }
+    .card-link:hover::before {
+      transform: scaleX(1);
+    }
+  }
+  .card-link:focus-visible::before {
+    transform: scaleX(1);
+  }
+  .card-link:active {
+    transform: translateY(0);
+  }
+
+  .check-box {
+    appearance: none;
+    display: grid;
+    place-content: center;
+    flex-shrink: 0;
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 4.5);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-out-quart),
+      border-color 200ms var(--ease-out-quart);
+  }
+  .check-box::before {
+    content: "";
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
+    background-color: var(--color-accent-fg);
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0, 43% 62%);
+    transform: scale(0);
+    transition: transform 150ms var(--ease-out-quart);
+  }
+  .check-box:checked {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+  }
+  .check-box:checked::before {
+    transform: scale(1);
+  }
+  @media (hover: hover) {
+    .check-box:hover {
+      border-color: var(--color-accent);
+    }
+  }
+  .check-box:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  @media (forced-colors: active) {
+    .check-box {
+      appearance: auto;
+    }
+    .check-box::before {
+      display: none;
+    }
+  }
+
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Base
+---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--site-header-height) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv01";
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Tasteful, unobtrusive scrollbar (WebKit) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-scroll-thumb);
+    border: 2px solid var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scroll-thumb-hover);
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Utilities / decorative helpers
+---------------------------------------------------------------------------- */
+@layer utilities {
+  /* Faint engineering grid — masked to fade out. Not a glow. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+    background-size: 72px 72px;
+    background-position: center top;
+    -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 35%, transparent 78%);
+    mask-image: radial-gradient(120% 80% at 50% 0%, #000 35%, transparent 78%);
+  }
+
+  .hairline-t {
+    border-top: 1px solid var(--color-line);
+  }
+  .hairline-b {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Animated marquee track — transform-only, paused for reduced motion.
+     Hovering the strip pauses the loop so the marks can actually be read.
+     The duration follows the number of marks (`--marquee-items`, set by
+     components/logo-strip.tsx), so a longer strip does not run faster. */
+  .marquee-track {
+    animation: marquee calc(var(--marquee-items, 8) * 4.75s) linear infinite;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* The short side of a two-column layout stays in view while the long side
+   scrolls past it. Use it with the breakpoint at which the layout becomes two
+   columns (`md:pin-side`), and put it on the grid item itself: a sticky box
+   only travels inside its parent, so a wrapper no taller than the box pins
+   nothing. The offset clears the fixed header. Below 44rem of window height
+   the tallest pinned box, the summary on the legal pages, no longer fits
+   under the header, so nothing pins there. */
+@utility pin-side {
+  @media (min-height: 44rem) {
+    position: sticky;
+    top: calc(var(--spacing) * 24);
+    align-self: start;
+  }
+}
+
+/* For a pinned side that can be taller than the window, like the contents of
+   a long article on a short screen. Add it next to `pin-side`: the box then
+   ends the same distance above the bottom of the window as it starts below
+   the top, and scrolls on its own past that. The side padding leaves room
+   for the focus ring of a link at the edge, which the scroll box would
+   otherwise cut off. */
+@utility pin-side-fit {
+  @media (min-height: 44rem) {
+    max-height: calc(100dvh - var(--spacing) * 48);
+    margin-inline: calc(var(--spacing) * -2);
+    padding-inline: calc(var(--spacing) * 2);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+/* Vertical rhythm. `section-y` is the padding of every full-width band, so
+   two bands that meet at a hairline are always the same distance apart.
+   `section-rule` starts a new block inside a band: a gap, a hairline, then
+   the block's heading. */
+@utility section-y {
+  padding-block: calc(var(--spacing) * 18);
+  @media (width >= 48rem) {
+    padding-block: calc(var(--spacing) * 24);
+  }
+}
+@utility section-rule {
+  margin-top: calc(var(--spacing) * 14);
+  border-top: 1px solid var(--color-line);
+  padding-top: calc(var(--spacing) * 10);
+  @media (width >= 48rem) {
+    margin-top: calc(var(--spacing) * 18);
+  }
+}
+
+/* A scroller that hides its scrollbar. Only for a strip that has its own
+   controls and shows where it stands, like the references carousel. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Looping strip (components/carousel.tsx): a row of cards the full width of
+   the window. `--strip-inset` is the page margin, from the edge of the strip
+   to the content of a <Container>, whose width and padding it mirrors. The
+   cards start there and the strip fades out across it on both sides. The
+   percentages resolve where the variable is used: against the strip's own
+   width in the mask, and against the same width in the track's margin. */
+.loop-strip {
+  --strip-gutter: calc(var(--spacing) * 6);
+  --strip-inset: max(
+    var(--strip-gutter),
+    calc((100% - var(--site-max-width)) / 2 + var(--strip-gutter))
+  );
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--strip-inset), #000 calc(100% - var(--strip-inset)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--strip-inset), #000 calc(100% - var(--strip-inset)), transparent);
+}
+@media (width >= 48rem) {
+  .loop-strip {
+    --strip-gutter: calc(var(--spacing) * 8);
+  }
+}
+.loop-track {
+  margin-left: var(--strip-inset);
+}
+
+/* Kept unlayered (like .btn-block) so Tailwind doesn't tree-shake the
+   compound selector / keyframes out of the utilities layer. */
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+/* Marks fade out towards both edges of the strip. */
+.marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Four-block pulse — the logo mark's four blue shades chasing each other
+   across a row of squares. Discrete steps, like the block button. Rests on
+   the quietest shade when the animation isn't running (reduced motion). */
+.block-pulse {
+  background-color: var(--color-shade-1);
+  animation: block-cycle 2.8s steps(1, end) infinite;
+}
+@keyframes block-cycle {
+  0%   { background-color: var(--color-shade-1); }
+  25%  { background-color: var(--color-shade-2); }
+  50%  { background-color: var(--color-shade-3); }
+  75%  { background-color: var(--color-shade-4); }
+  100% { background-color: var(--color-shade-1); }
+}
+
+/* Scroll progress — the header's lower rule fills with the accent from the
+   left as the page scrolls, and is full at the end of the page. The scroll
+   position drives it directly, with no script. Browsers without scroll
+   timelines leave the rule plain, and so does a page too short to scroll. */
+.scroll-progress {
+  transform: scaleX(0);
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scroll-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+/* Both ends are written out. With the start left to the resting style,
+   WebKit eases the rule twice and it trails the scroll position. */
+@keyframes scroll-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Theme switch — the new theme wipes down over the old one from the header,
+   where the switch sits. ThemeToggle sets data-theme-switch for the length
+   of the transition, so no other view transition picks these rules up. It
+   skips the transition under reduced motion. */
+:root[data-theme-switch]::view-transition-old(root),
+:root[data-theme-switch]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-theme-switch]::view-transition-new(root) {
+  animation: theme-wipe 560ms var(--ease-out-quart);
+}
+@keyframes theme-wipe {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
+/* ----------------------------------------------------------------------------
+   Accessibility
+---------------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-150%);
+  transition: transform 150ms var(--ease-out-quart);
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ----------------------------------------------------------------------------
+   Entrances — the markup comes from components/Reveal.tsx.
+
+   .reveal         fades and rises into place. data-reveal="load" plays as the
+                   page paints; "pending" holds the starting position until
+                   the element scrolls into view, then "shown" plays it.
+   .masked-line    a line of display type rising out of its overflow slot.
+   .underline-draw the rule under a headline accent, drawn left to right.
+
+   Each animation only fills backwards: once it ends the element carries no
+   transform or opacity of its own, so it stacks like any other element.
+   Timing comes from the custom properties, set inline where a component
+   departs from the defaults below.
+---------------------------------------------------------------------------- */
+.reveal {
+  --reveal-y: 20px;
+  --reveal-duration: 0.7s;
+  --reveal-delay: 0s;
+}
+.reveal[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y));
+}
+.reveal[data-reveal="load"],
+.reveal[data-reveal="shown"] {
+  animation: reveal-rise var(--reveal-duration) var(--ease-out-expo)
+    var(--reveal-delay) backwards;
+}
+.masked-line {
+  --reveal-duration: 0.9s;
+  --reveal-delay: 0s;
+  animation: masked-line-rise var(--reveal-duration) var(--ease-out-expo)
+    var(--reveal-delay) backwards;
+}
+.underline-draw {
+  --reveal-delay: 0.9s;
+  animation: underline-draw 0.7s var(--ease-out-expo) var(--reveal-delay)
+    backwards;
+}
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-y));
+  }
+}
+@keyframes masked-line-rise {
+  from {
+    transform: translateY(112%);
+  }
+}
+@keyframes underline-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+/* Without scripts nothing can report scrolling into view: show it all. */
+@media (scripting: none) {
+  .reveal[data-reveal="pending"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* With no loop to bring the rest into view, the strip shows every mark
+     once: the row wraps, the clone goes, and the edge fade comes off. */
+  .marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .marquee-track {
+    animation: none !important;
+    width: auto;
+  }
+  .marquee-group {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: calc(var(--spacing) * 5);
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .marquee-group[aria-hidden="true"] {
+    display: none;
+  }
+  /* Entrances appear at once, wherever they sit on the page: no travel and
+     no waiting out a stagger delay. */
+  .reveal[data-reveal],
+  .masked-line,
+  .underline-draw {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* Keep page controls reachable above the non-modal storage notice. */
+body { padding-bottom: var(--cookie-notice-height, 0px); }
+html { scroll-padding-bottom: var(--cookie-notice-height, 0px); }
+@media (width < 48rem) {
+  html body[data-blockconsult-site] .bc-chat-launcher {
+    inset-block-end: max(24px, calc(var(--cookie-notice-height, 0px) + 8px));
+  }
+}
+@media print { body { padding-bottom: 0; } }

@@ -1,0 +1,109 @@
+/* Shared presentation for public tool inputs. Tool styles own layout only. */
+.field :is(input, textarea), .control {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: .625rem .75rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  font: 400 .875rem/1.5 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.field textarea { min-height: 96px; resize: vertical; overflow-wrap: anywhere; }
+.field :is(input, textarea):disabled, .control:disabled, .control[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+.field :is(input, textarea)[readonly] { border-style: dashed; }
+@media (hover: hover) {
+  .field :is(input, textarea):not(:disabled, [readonly], [aria-invalid="true"]):hover,
+  .control:not(:disabled, [aria-disabled="true"], [aria-invalid="true"]):hover { border-color: var(--color-muted); }
+}
+.field :is(input, textarea):focus-visible, .control:focus-visible {
+  border-color: var(--color-link);
+  outline: 2px solid var(--color-link);
+  outline-offset: 3px;
+}
+.field :is(input, textarea)[aria-invalid="true"], .control[aria-invalid="true"] {
+  border-color: var(--color-link);
+  box-shadow: inset 0 0 0 1px var(--color-link);
+}
+.box { composes: control; padding: 0; display: flex; align-items: stretch; }
+.box:has(:focus-visible) { border-color: var(--color-link); outline: 2px solid var(--color-link); outline-offset: 3px; }
+.box:has([aria-invalid="true"]) { border-color: var(--color-link); box-shadow: inset 0 0 0 1px var(--color-link); }
+.box:has(:disabled) { opacity: .6; cursor: not-allowed; }
+.compact:focus-visible, .compact:has(:focus-visible) { outline-offset: 0; }
+
+.select { composes: control; }
+.select.select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .625rem .75rem;
+  font: 500 .875rem/1.5 var(--font-sans);
+  text-align: left;
+  cursor: pointer;
+}
+.select > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.select.select[aria-expanded="true"] { border-color: var(--color-link); background: var(--color-surface); }
+.select.select:not(:disabled):not([aria-disabled="true"]):hover { background: var(--color-surface); border-color: var(--color-link); }
+.chevron { width: 12px; height: 12px; flex: none; color: var(--color-muted); transition: transform 150ms; }
+[aria-expanded="true"] > .chevron { transform: rotate(180deg); color: var(--color-link); }
+
+.popup {
+  box-sizing: border-box;
+  display: none;
+  position: fixed;
+  inset: auto;
+  z-index: 100;
+  margin: 0;
+  padding: .25rem;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  max-height: min(320px, calc(100dvh - 24px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  box-shadow: 0 4px 8px #00000008, 0 12px 28px #00000014;
+  font: 400 .875rem/1.5 var(--font-sans);
+  letter-spacing: normal;
+  text-align: start;
+  text-transform: none;
+}
+.popup * { box-sizing: border-box; }
+.popup[role="listbox"] { width: min-content; }
+.popup[data-open="true"] { display: block; }
+.option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: .75rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: .625rem .75rem;
+  color: var(--color-fg);
+  font-size: .875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.option[aria-selected="true"] { font-weight: 500; }
+.option[data-active="true"] { background: color-mix(in srgb, var(--color-link) 9%, var(--color-surface)); }
+.mark { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
+.tick { width: 12px; height: 12px; color: var(--color-link); visibility: hidden; }
+.option[aria-selected="true"] .tick { visibility: visible; }
+@media (max-width: 767px) {
+  .field :is(input, textarea), .control, .select.select { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chevron { transition: none; }
+  .popup, .popup * { scroll-behavior: auto; }
+}
+@media (forced-colors: active) {
+  .option[data-active="true"] { outline: 1px solid Highlight; outline-offset: -1px; }
+}
