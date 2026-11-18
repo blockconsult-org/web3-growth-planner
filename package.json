@@ -1,6 +1,6 @@
 {
   "name": "@blockconsult/web3-growth-planner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Model campaigns, acquisition costs, incentive budgets and retention.",
   "author": "Block Consult GmbH",

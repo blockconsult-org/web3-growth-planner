@@ -1,4 +1,4 @@
-First standalone desktop release of the Block Consult tool.
+Standalone desktop release of the Block Consult tool.
 
 - Offline calculations and editing; English and German; light and dark themes.
 - Native file downloads and PDF reports; compatible JSON imports and public browser share links.
@@ -7,6 +7,6 @@ First standalone desktop release of the Block Consult tool.
 
 Downloads: universal macOS DMG/ZIP for Apple silicon and Intel; Windows x64 installer and portable executable. SHA-256 hashes are in `SHA256SUMS.txt`.
 
-**Signing status:** CI artifacts are not Apple-notarized. Windows artifacts are unsigned unless a signing certificate was explicitly configured for this build. The publisher must update this status after verifying final release assets.
+**Signing status:** The published macOS downloads are signed with the available Apple Developer ID (Alexandros Savorgiannakis, Team 97MH8853HX), but are not notarized. Windows downloads are unsigned. Your operating system may require explicit approval before first launch. No signing keys are included.
 
 Saved drafts remain local to each installation. Export JSON to move work between devices. Updates are manual downloads.

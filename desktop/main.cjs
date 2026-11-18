@@ -14,9 +14,12 @@ const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css
 async function savePdf(win) {
   if (!win || pdfBusy || !localUrl(win.webContents.getURL())) return false;
   pdfBusy = true;
+  const background = win.getBackgroundColor();
   try {
     const selection = await dialog.showSaveDialog(win, { title: 'Save report / Bericht speichern', defaultPath: meta.slug + '-report.pdf', filters: [{ name: 'PDF', extensions: ['pdf'] }] });
     if (selection.canceled || !selection.filePath) return false;
+    // Chromium paints PDF page margins using the native view background.
+    win.setBackgroundColor('#ffffff');
     await win.webContents.executeJavaScript("window.dispatchEvent(new Event('beforeprint'))");
     const data = await win.webContents.printToPDF({ printBackground: true, preferCSSPageSize: true });
     await fs.writeFile(selection.filePath, data);
@@ -25,6 +28,7 @@ async function savePdf(win) {
     await dialog.showMessageBox(win, { type: 'error', message: 'The PDF could not be saved. / Das PDF konnte nicht gespeichert werden.', detail: String(error.message) });
     return false;
   } finally {
+    if (!win.isDestroyed()) win.setBackgroundColor(background);
     if (!win.isDestroyed()) await win.webContents.executeJavaScript("window.dispatchEvent(new Event('afterprint'))").catch(() => {});
     pdfBusy = false;
   }

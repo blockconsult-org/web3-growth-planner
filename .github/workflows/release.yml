@@ -1,7 +1,6 @@
 name: Test and build desktop apps
 on:
   push:
-    branches: [main]
     tags: ['v*']
   pull_request:
   workflow_dispatch:

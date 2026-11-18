@@ -3,7 +3,7 @@
   "name": "Web3 Growth & Incentive Planner",
   "nameDe": "Web3-Wachstums- & Anreizplaner",
   "description": "Model campaigns, acquisition costs, incentive budgets and retention.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "appId": "org.blockconsult.web3growthplanner",
   "publicPath": "/tools/web3-growth-planner",
   "repository": "https://github.com/blockconsult-org/web3-growth-planner",
