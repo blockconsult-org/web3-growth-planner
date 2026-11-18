@@ -1,14 +1,45 @@
-<p align="left"><img src="public/icon.png" width="64" alt="Block Consult" /></p>
+<a href="https://www.blockconsult.org">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/blockconsult-logo.png">
+    <img src="public/blockconsult-logo-light.png" alt="Block Consult" width="280">
+  </picture>
+</a>
 
 # Web3 Growth & Incentive Planner
 
-Model campaigns, acquisition costs, incentive budgets and retention. A focused, offline desktop workspace from [Block Consult](https://www.blockconsult.org), available in English and German.
+Plan a Web3 acquisition campaign or review its observed results. Define the cohort, activation event and retention window, then enter channel costs, participant counts and cash or token rewards to compare costs per activated and retained participant.
+
+An offline desktop tool from [Block Consult](https://www.blockconsult.org), available in English and German. It supports up to three alternative scenarios with eight channels each, without a wallet connection or live market data.
 
 [![Latest release](https://img.shields.io/github/v/release/blockconsult-org/web3-growth-planner)](https://github.com/blockconsult-org/web3-growth-planner/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [Platform builds](https://github.com/blockconsult-org/web3-growth-planner/actions/workflows/release.yml)
 
 **[Download for macOS or Windows](https://github.com/blockconsult-org/web3-growth-planner/releases/latest)** · [Use in your browser](https://www.blockconsult.org/tools/web3-growth-planner) · [Report an issue](https://github.com/blockconsult-org/web3-growth-planner/issues)
 
-![Web3 Growth & Incentive Planner workspace](docs/screenshot.png)
+![Web3 Growth and Incentive Planner in dark mode, with campaign inputs and calculated results](docs/screenshot.png)
+
+The workspace places channel assumptions beside their campaign outcomes.
+
+## What you can do
+
+- Define an activation event, counting unit, acquisition window, retention window and eligibility rules so each result has a stated measurement basis.
+- Use planned activation and retention rates, or enter observed counts. Incomplete retention windows remain unknown rather than becoming zero.
+- Model acquisition spend, cash or token rewards and shared operating costs. Review the acquisition-to-retention funnel, budget allocation and cost per outcome.
+- Compare up to three scenarios, inspect channel-level results and reward exposure, then export a measurement report, JSON model, PNG summary or PDF.
+
+The planner calculates from your inputs. It does not estimate ROI, lifetime value, token prices or the causal effect of rewards on retention. Currency changes update the label only; they do not convert amounts.
+
+## Get started
+
+1. Select a **Fictional starting point** and choose **Load example**. KOL outreach, developer activation and community onboarding examples are included.
+2. Review the **Measurement plan**, then edit channel spend, eligible participants, activation, retention and rewards. Keep channel cohorts mutually exclusive.
+3. Inspect the results and use **Duplicate scenario** to compare an alternative. For observed results, mark a retention window complete only after the whole channel has had time to finish it.
+4. Choose **Save locally** before closing. Use **Files & storage** for JSON, or export a report or preview **Share this scenario**.
+
+## Screenshots
+
+![Community onboarding example in light mode, showing campaign costs, acquisition and retention counts, reward budget and cost per outcome](docs/screenshots/example.png)
+
+The fictional community onboarding example uses token rewards and counts addresses. Its figures illustrate the model; they are not performance benchmarks, and addresses are not people.
 
 ## Download and install
 
@@ -20,22 +51,24 @@ Model campaigns, acquisition costs, incentive budgets and retention. A focused, 
 
 Release notes state the signing and notarization status of each download. Unsigned Windows releases may show a publisher warning. macOS requires macOS 13 or later. Check `SHA256SUMS.txt` against the downloaded file using `shasum -a 256` (macOS) or `Get-FileHash -Algorithm SHA256` (PowerShell). Download only from this repository's Releases page.
 
-## A private workspace
+## Your data
 
 - Calculations and editing work without an internet connection, account or API key.
 - English/German UI, light/dark themes, keyboard controls and resizable layouts.
 - Existing JSON models and browser share links remain compatible. Use **Open share link** to inspect a shared scenario locally.
 - Exports use a native file-save dialog. **File → Save report as PDF** writes a local PDF.
-- Drafts stay in this app's local profile; JSON exports are portable backups. Draft behavior follows the original tool (see the tool's save controls).
+- **Save locally** stores one campaign, including all its scenarios, in this app's profile; saving again replaces that copy. Edits are not saved automatically. Export JSON for portable backups or to keep more than one campaign.
 - No analytics, telemetry, cloud synchronization or automatic uploads. Website and evidence links open in your default browser. Unknown evidence destinations require confirmation.
 
-Share links are readable, encoded snapshots, **not encrypted**. Review the sharing preview and optional inclusion of authored text before copying one. Closing an unsaved workspace can lose edits; save or export first. Opening a share link replaces the current workspace.
+Share links are readable, encoded snapshots, **not encrypted**. Every scenario's numeric inputs, currency, counting unit, windows, reward policy and observation status are included. **Share this scenario** lets you choose whether to also include names, measurement text, notes and evidence links. Review the preview before copying a link. Closing an unsaved workspace can lose edits; save or export first. Opening a share link replaces the current workspace.
 
-## Develop
+## Run from source
 
 Install Node.js 24 or newer, then:
 
 ```sh
+git clone https://github.com/blockconsult-org/web3-growth-planner.git
+cd web3-growth-planner
 npm ci
 npm run build
 npm start
@@ -59,14 +92,14 @@ npm run dist -- --win --x64       # on Windows
 | `tests/` | Calculation regressions and real desktop integration checks |
 | `.github/workflows/release.yml` | Tests and platform builds; draft releases for version tags |
 
-The original pure model code is preserved. The desktop adaptation changes navigation, share-link origins, local resources and native export handling. Source baseline: `1acdf7a290ef4d54e0b882c9d1b8c2bde79c8f9e`. No website server, portal, client data, credentials or provider integration is included.
-
 ## Release and maintenance
 
-See [release instructions](docs/RELEASING.md), [security policy](SECURITY.md) and [contribution guide](CONTRIBUTING.md). Releases are manual downloads; the app does not silently update. Keep the Electron runtime current when maintaining a fork.
+See the [release instructions](docs/RELEASING.md) for packaging and publishing. Releases are manual downloads; the app does not silently update. Keep the Electron runtime current when maintaining a fork.
 
-These tools support planning and discussion. Results depend on the supplied assumptions and the documented model limitations; they are not a prediction or professional advice.
+This tool supports campaign planning and measurement. Results depend on the supplied assumptions and cohort definitions; they are not forecasts. Reward exposure describes the budget and rewarded share, not proof that an incentive caused retention.
 
-## License
+## Contributing and license
 
-[MIT](LICENSE) · Copyright © 2026 Block Consult GmbH. Names and logos remain Block Consult trademarks.
+Read the [contribution guide](CONTRIBUTING.md) before opening a pull request. Report vulnerabilities through the process in the [security policy](SECURITY.md).
+
+[MIT](LICENSE) · Copyright © 2026 Block Consult GmbH. The license covers the code; it does not grant rights to use Block Consult’s name or logo as an endorsement.
