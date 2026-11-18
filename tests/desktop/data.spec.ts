@@ -46,6 +46,18 @@ test('native JSON round trip and browser-compatible offline snapshots', async ()
     const restored = await exportJson('restored.json');
     expect(restored).toEqual(modified);
     if (await dialogs.count()) await page.keyboard.press('Escape');
+    const csv = meta.slug === 'tokenomics-simulator';
+    const imageOutput = path.join(profile, csv ? 'monthly.csv' : 'summary.png');
+    await app.evaluate(({ session }, output) => { session.defaultSession.once('will-download', (_event, item) => item.setSavePath(output)); }, imageOutput);
+    if (meta.slug === 'ai-opportunity-finder') await page.getByRole('tab', { name: /Compare/ }).click();
+    const imageAction = page.getByText(csv ? 'Download monthly data (CSV)' : 'Download PNG summary', { exact: true });
+    if (!await imageAction.isVisible()) await page.getByRole('button', { name: menus[meta.slug], exact: true }).first().click();
+    await imageAction.click();
+    await expect.poll(async () => { try { return (await stat(imageOutput)).size; } catch { return 0; } }).toBeGreaterThan(100);
+    const imageData = await readFile(imageOutput);
+    if (csv) expect(imageData.toString()).toContain('\r\n');
+    else expect([...imageData.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+    if (await dialogs.count()) await page.keyboard.press('Escape');
     const hash = await shareHash(restored);
     await page.getByRole('button', { name: 'Open share link', exact: true }).click();
     await page.locator('#snapshot').fill('https://www.blockconsult.org' + meta.publicPath + hash);

@@ -26,4 +26,4 @@ html, body, #root { min-height: 100%; }
 @media print { .desktop-bar, .desktop-footer, .desktop-skip, .desktop-dialog { display: none !important; } }
 
 /* Website reports expect main directly under body. Preserve the desktop mount. */
-@media print { body > #root { display: block !important; } }
+@media print { html, body, body > #root { background: #fff !important; color-scheme: light !important; } body > #root { display: block !important; } }
